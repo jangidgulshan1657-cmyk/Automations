@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 import WeatherModules
+import configmodule
+
+CONFIG_PATH = Path('Projects/Taskmanager/data/config.json')
 
 FILE_PATH = Path('Projects/Taskmanager/data/tasks.json')
 
@@ -8,19 +11,21 @@ tasks = []
 
 # printing Help
 def print_help():
-    print("\n---Always Start with Command!!---")
+    print("\n------Smart Task Manger -----")
+    print("\nPlease Procced With Command(1-9)")
     print("1. Add task")
     print("2. Mark task done")
     print("3. View list of task")
     print("4. Deleting the task.")
     print("5. for Help/Instructions.")
     print("6. Quit the program.")
-    print("7. Enter City Name to get The Weather Cast")
+    print("7. Get The Weather Information")
     print("8. Check Tasks That they are risky or not!!")
+    print("9. Settings Mode!!")
 
 
 #loadign the json File or Create if it doesn not Exist
-def loading(tasks):
+def loading_tasks(tasks):
     if not FILE_PATH.exists():
         print("File does not exist! \nCreating the File...")
         default_data = []
@@ -37,14 +42,11 @@ def loading(tasks):
                 return []
             print("Previous File has been loaded successfully!")
             return data
-        except json.JSONDecodeError:
-            print("File has been Currupted!!")
-            return []
-        except UnicodeDecodeError:
+        except (json.JSONDecodeError,UnicodeDecodeError):
             print("Invalid File")
             return []
 
-# Writing to json
+# Writing to json Tasks
 def writing(tasks):
     with open(FILE_PATH,'w') as f:
         json.dump(tasks,f,indent=4)
@@ -126,9 +128,8 @@ def delete_task(tasks):
     except ValueError:
         print("Please enter a valid number")
 
-def outdoor_detection(tasks):
-    outdoor_keywords = ["mow", "garden", "weed", "leaves", "drive", "walk",
-    "bike", "park", "store", "groceries", "car", "wash", "paint", "roof","running"]
+def outdoor_detection(tasks,config_data):
+    outdoor_keywords = config_data["outdoor_keywords"]
 
     outdoor_tasks = []
 
@@ -143,25 +144,33 @@ def outdoor_detection(tasks):
 
 
 # Defining Wheather the Task of outdoor is Risky or not!!
-def risk_check(tasks,city):
+def risk_check(tasks,city,config_data):
 
     url = WeatherModules.safe_url(city)
 
-    data = WeatherModules.getting_data(url)
+    weather_data = WeatherModules.getting_data(url)
 
-    if data is None:
+    if weather_data is None:
         print("[Weather unavailable - risk not checked]")
         print("Printing Normal List")
         view_list(tasks)
         return
     try:
         #gettting the Data form chunk
-        temperature = int(data["current_condition"][0]["temp_C"])
-        weather_condition = data["current_condition"][0]["weatherDesc"][0]["value"]
+        temperature = int(weather_data["current_condition"][0]["temp_C"])
+        weather_condition = weather_data["current_condition"][0]["weatherDesc"][0]["value"]
 
-        #Checking the Conditions
-        temperature_check = (temperature > 35 or temperature < 0)
-        condition_check = weather_condition in ["Rain", "Thunder", "Snow"]
+        #Checking the Temperature Conditions
+        min_tem = config_data["temperature_bounds"]["min"]
+        max_tem = config_data["temperature_bounds"]["max"]
+
+        temperature_check = (temperature > max_tem or temperature < min_tem)
+
+        #Checking the Weather condition
+        weather_keywords = config_data["weather_conditions"]
+        cond_lower = weather_condition.lower()
+        condition_check = any(k.lower() in cond_lower for k in weather_keywords)
+
         is_risky =  temperature_check or condition_check
 
         print(f"\n--- Weather Report for {city.title()} ---")
@@ -174,7 +183,7 @@ def risk_check(tasks,city):
         else:
             print("Its is Safe to do Outdoor tasks")
 
-        outdoor_tasks = outdoor_detection(tasks)
+        outdoor_tasks = outdoor_detection(tasks, config_data)
 
         if not outdoor_tasks:
             print("\nThere is no outdoor tasks!!")

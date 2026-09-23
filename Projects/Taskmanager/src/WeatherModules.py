@@ -3,7 +3,6 @@ import urllib.error
 import urllib.parse
 import json
 
-
 def getting_data(url):
     if url is None:
         print("Url cannot be None")
@@ -45,10 +44,6 @@ def organizing_data(information):
         print("To Display Expected data is not found!!")
 
 def safe_url(city):
-    if not city:
-        print("City cannot be Empty!")
-        return
-
     # urllib.parse.qoute() change the New York to New%20York 
     safe_city = urllib.parse.quote(city)
 
@@ -56,10 +51,7 @@ def safe_url(city):
     return url              
 
 def weather_info(city):
-    if not city:
-        print("City Cannot be Empty")
-        return
-    print("------Weather Information--------")
+    print("\n------Weather Information--------")
 
     url = safe_url(city)
     data = getting_data(url)

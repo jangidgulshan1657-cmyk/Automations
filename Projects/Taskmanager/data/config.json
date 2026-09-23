@@ -1,0 +1,29 @@
+{
+    "outdoor_keywords": [
+        "mow",
+        "garden",
+        "weed",
+        "leaves",
+        "drive",
+        "walk",
+        "bike",
+        "park",
+        "store",
+        "groceries",
+        "car",
+        "wash",
+        "paint",
+        "roof",
+        "running",
+        "jogging"
+    ],
+    "temperature_bounds": {
+        "min": 0,
+        "max": 35
+    },
+    "weather_conditions": [
+        "rain",
+        "thunder",
+        "snow"
+    ]
+}
