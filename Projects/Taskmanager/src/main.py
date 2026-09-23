@@ -1,80 +1,76 @@
-import WeatherModules
-import TaskModules
-import configmodule
+import weather
+import task
+import config
 
 tasks = []
  # main program Loop
 
 def main():
-    tasks_local = TaskModules.loading_tasks(tasks)
-    config_data = configmodule.loading_conf()
+    tasks_local = task.loading_tasks(tasks)
+    config_data = config.loading_conf()
+    main_keyword = config_data["main_commands"]
 
-    TaskModules.print_help()
+    task.print_help(main_keyword)
     while True:
-            city = input("\nCurrently Which City are You In live In: ").strip()
+            city = input("\nCurrently Which City You live In: ").strip()
             if city:
                 break
             print("City cannot be Empty!")
 
 
     while True:
-        try:
+            user_input = input("\nMain Command:").strip().lower()
+            command = config.detection(user_input,main_keyword)
 
-            command = int(input("\nMain Command (1-9):").strip())
-
-            if command == 1:
-                TaskModules.add_task(tasks_local)
-            elif command == 2:
-                TaskModules.mark_done(tasks_local)
-            elif command == 3:
-                TaskModules.view_list(tasks_local)
-            elif command == 4:
-                TaskModules.delete_task(tasks_local)          
-            elif command == 5:
-                TaskModules.print_help()          
-            elif command == 6:
-                TaskModules.writing(tasks_local)
+            if command == "add_task":
+                task.add_task(tasks_local)
+            elif command =="mark_done":
+                task.mark_done(tasks_local)
+            elif command == "view_list":
+                task.view_list(tasks_local)
+            elif command == "delete_task":
+                task.delete_task(tasks_local)          
+            elif command == "help":
+                task.print_help(main_keyword)          
+            elif command == "quit":
+                task.writing(tasks_local)
                 print("\nChanges Has been Saved. Good bye!")
                 break
-            elif command == 7:
-                WeatherModules.weather_info(city)
-            elif command == 8:
-                TaskModules.risk_check(tasks_local,city,config_data)
-            elif command == 9:
+            elif command == "weather":
+                weather.weather_info(city)
+            elif command == "risk_check":
+                task.risk_check(tasks_local,city,config_data)
+            elif command == "settings":
                 change_config(config_data)
             else:
-                TaskModules.print_help()
-                print("\nPlease Enter Valid Command (1-9)")
+                print("\nError: Command Not Found Error!! Type 'help' for More Info")
         
-        except ValueError:
-            print("\nPlease Enter Valid Number")
 
 def change_config(config_data):
 
-    configmodule.print_help()
+    settings_commands = config_data["settings_commands"]
+    config.print_help(settings_commands)
 
     while True:
-        try:
-            command = int(input("\nSettings Command (1-5):"))
+            user_input = input("\nSettings Command: ").strip().lower()
+            command = config.detection(user_input,settings_commands)
 
-            if command == 1:
-                configmodule.add_outdoor(config_data)
-            elif command == 2:
-                configmodule.add_weather_condition(config_data)
-            elif command == 3:
-                configmodule.change_temp(config_data)
-            elif command == 4:
-                configmodule.view_list_config(config_data)
-            elif command == 5:
-                configmodule.writing_config(config_data)
-                print("Changes has been Saved!!")
+            if command == "add_outdoor":
+                config.add_outdoor(config_data)
+            elif command == "add_weather":
+                config.add_weather_condition(config_data)
+            elif command == "change_temp":
+                config.change_temp(config_data)
+            elif command == "view_config":
+                config.view_list_config(config_data)
+            elif command == "back":
+                config.writing_config(config_data)
+                print("Changes has been Updated and Saved!!")
+                print(" Returning to Menu.....")
                 break
             else:
-                configmodule.print_help()
-                print("Please Enter Valid Command (1-5)!!")
-        
-        except ValueError:
-            print("Please Enter Valid Number")
+                config.print_help(settings_commands)
+                print("Please Enter Valid Command!!")
 
 
 if __name__ == "__main__":

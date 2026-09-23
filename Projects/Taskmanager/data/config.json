@@ -15,15 +15,93 @@
         "paint",
         "roof",
         "running",
-        "jogging"
+        "hiking"
     ],
     "temperature_bounds": {
-        "min": 0,
-        "max": 35
+        "min": 2,
+        "max": 30
     },
     "weather_conditions": [
         "rain",
         "thunder",
-        "snow"
-    ]
+        "snow",
+        "heat"
+    ],
+    "main_commands": {
+        "add_task": [
+            "add",
+            "add task",
+            "new task"
+        ],
+        "mark_done": [
+            "done",
+            "mark",
+            "mark done"
+        ],
+        "view_list": [
+            "list",
+            "tasks",
+            "view"
+        ],
+        "delete_task": [
+            "delete",
+            "remove",
+            "del"
+        ],
+        "help": [
+            "help",
+            "commands",
+            "info"
+        ],
+        "weather": [
+            "weather",
+            "forecast",
+            "temp"
+        ],
+        "risk_check": [
+            "risk",
+            "check",
+            "risk check"
+        ],
+        "settings": [
+            "settings",
+            "config",
+            "options"
+        ],
+        "quit": [
+            "quit",
+            "exit",
+            "bye"
+        ]
+    },
+    "settings_commands": {
+        "add_outdoor": [
+            "outdoor",
+            "add outdoor",
+            "outdoor keyword"
+        ],
+        "add_weather": [
+            "weather",
+            "add weather",
+            "weather condition"
+        ],
+        "change_temp": [
+            "temp",
+            "temperature",
+            "change temp"
+        ],
+        "view_config": [
+            "view",
+            "list",
+            "show config"
+        ],
+        "back": [
+            "back",
+            "return",
+            "menu",
+            "quit",
+            "exit",
+            "close"
+        ]
+    }
 }

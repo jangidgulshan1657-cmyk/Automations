@@ -3,13 +3,13 @@ from pathlib import Path
 
 CONFIG_PATH = Path('Projects/Taskmanager/data/config.json')
 
-def print_help():
-    print("\nPlease, Enter a Command to Procced(1-6)!!")
-    print("\n1. For Adding Outdoor Keyword.")
-    print("2. For Adding Weather Conditons")
-    print("3. Changing temperature Settings.")
-    print("4. View the list of Keyowords in Settings.")
-    print("5. Return to Menu With Saved Changes!!.")
+def print_help(settings_commands):
+    print("\n-----Settings Mode-----!!")
+    print(f"\n--For Adding Outdoor Keyword: {', '.join(settings_commands['add_outdoor'])}")
+    print(f"--For Adding Weather Conditons: {', '.join(settings_commands['add_weather'])}")
+    print(f"--Changing temperature Settings: {', '.join(settings_commands['change_temp'])}")
+    print(f"--View the list of Keyowords in Settings: {', '.join(settings_commands['view_config'])}")
+    print(f"--Save the Changes!! And Return to Menu: {', '.join(settings_commands['back'])}")
 
 def view_list_config(config_data):
     outdoor = config_data["outdoor_keywords"]
@@ -20,14 +20,21 @@ def view_list_config(config_data):
     print(f"Weather Keywords = {weather}")
     print(f"Extereme Temperature = {temperature}")
 
+def detection(user_input:str,command_map:dict):
+    if not user_input:
+        return
+    for command, aliases in command_map.items():
+            if user_input in aliases:
+                return command
+    
 
 # Checking the validity of Config file
 def is_valid_config(data)->bool:
     if not isinstance(data,dict):
         return False
 
-    required_keys = {"outdoor_keywords", "temperature_bounds", "weather_conditions"}
-    if not required_keys.issubset(data.keys()):#checking the required keys in dictionary
+    required_keys = {"outdoor_keywords", "temperature_bounds", "weather_conditions","main_commands","settings_commands"}
+    if not required_keys.issubset(data.keys()):
         return False
 
     if not isinstance(data['outdoor_keywords'],list) or not all(isinstance(k,str) for k in data['outdoor_keywords']):
@@ -37,7 +44,10 @@ def is_valid_config(data)->bool:
         return False
     
     bounds = data['temperature_bounds']
-    if not isinstance(bounds,dict):
+    m_com = data['main_commands']
+    s_com = data['settings_commands']
+
+    if not all(isinstance(x,dict) for x in (bounds,m_com,s_com)):
         return False
     
     if 'min' not in bounds or 'max' not in bounds: 
@@ -49,15 +59,50 @@ def is_valid_config(data)->bool:
     if bounds['min'] > bounds['max']:
         return False
 
+    required_main_keys = {"add_task", "mark_done", "view_list", "delete_task", "help", "weather", "risk_check", "settings", "quit"}
+    if not required_main_keys.issubset(m_com.keys()):
+        return False
+    
+    if not all(isinstance(k,list) and all(isinstance(word,str) for word in k) for k in m_com.values()):
+        return False
+    
+    required_setting_keys = {"add_outdoor","add_weather","change_temp","view_config","back",}
+    if not required_setting_keys.issubset(s_com.keys()):
+        return False
+    
+    if not all(isinstance(s,list) and all(isinstance(word,str) for word in s) for s in s_com.values()):
+        return False
+
     return True
 
 def default_file():
     default_data = {
             'outdoor_keywords': ["mow", "garden", "weed", "leaves", "drive", "walk",
-            "bike", "park", "store", "groceries", "car", "wash", "paint", "roof","running"],
+                                "bike", "park", "store", "groceries", "car", "wash", 
+                                "paint", "roof","running"],
             "temperature_bounds": {"min": 0,"max": 35},
-            'weather_conditions':["rain", "thunder", "snow"]
-            }
+
+            'weather_conditions':["rain", "thunder", "snow"],
+
+            "main_commands": {
+                    "add_task": ["add", "add task", "new task"],
+                    "mark_done": ["done", "mark", "mark done"],
+                    "view_list": ["list", "tasks", "view"],
+                    "delete_task": ["delete", "remove", "del"],
+                    "help": ["help", "commands", "info"],
+                    "weather": ["weather", "forecast", "temp"],
+                    "risk_check": ["risk", "check", "risk check"],
+                    "settings": ["settings", "config", "options"],
+                    "quit": ["quit", "exit", "bye"]
+                },
+            "settings_commands": {
+                    "add_outdoor": ["outdoor", "add outdoor", "outdoor keyword"],
+                    "add_weather": ["weather", "add weather", "weather condition"],
+                    "change_temp": ["temp", "temperature", "change temp"],
+                    "view_config": ["view", "list", "show config"],
+                    "back": ["back", "return", "menu","quit", "exit", "close"]
+                }}
+                            
     with open(CONFIG_PATH,'w') as f:
         json.dump(default_data,f,indent=4)
     return default_data
@@ -104,8 +149,7 @@ def add_outdoor(config_data):
                 print(f"Keyword '{keyword}' Already Exist")
                 return
     outdoor_keywords.append(keyword)
-    writing_config(config_data)
-    print(f"Keyword '{keyword}' has been added Succcessfully")
+    print(f"Keyword '{keyword}' has been added. Dont forget to Save!!")
 
 def add_weather_condition(config_data):
     weather_keywords = config_data["weather_conditions"]
@@ -120,8 +164,7 @@ def add_weather_condition(config_data):
                 print(f"Keyword '{keyword}' Already Exist")
                 return
     weather_keywords.append(keyword)
-    writing_config(config_data)
-    print(f"Keyword '{keyword}' has been added Succcessfully")
+    print(f"Keyword '{keyword}' has been added. Dont Forgot to change!!")
 
 def change_temp(config_data):
     current_min = config_data["temperature_bounds"]["min"]
@@ -150,5 +193,4 @@ def change_temp(config_data):
     config_data["temperature_bounds"]["min"] = current_min
     config_data["temperature_bounds"]["max"] = current_max
 
-    writing_config(config_data)
-    print("Temperature bounds updated and saved successfully!")
+    print("Temperature bounds updated. Dont Forget to Save!!")

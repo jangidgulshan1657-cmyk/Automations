@@ -1,27 +1,24 @@
 import json
 from pathlib import Path
-import WeatherModules
-import configmodule
-
-CONFIG_PATH = Path('Projects/Taskmanager/data/config.json')
+import weather
 
 FILE_PATH = Path('Projects/Taskmanager/data/tasks.json')
 
 tasks = []
 
 # printing Help
-def print_help():
+def print_help(main_commands):
     print("\n------Smart Task Manger -----")
-    print("\nPlease Procced With Command(1-9)")
-    print("1. Add task")
-    print("2. Mark task done")
-    print("3. View list of task")
-    print("4. Deleting the task.")
-    print("5. for Help/Instructions.")
-    print("6. Quit the program.")
-    print("7. Get The Weather Information")
-    print("8. Check Tasks That they are risky or not!!")
-    print("9. Settings Mode!!")
+    print("\nFollowing Are the Commands of Each function!! ")
+    print(f"\n--To Add task: {', '.join(main_commands['add_task'])}")
+    print(f"--To Mark task done: {', '.join(main_commands['mark_done'])}")
+    print(f"--To View list of task: {', '.join(main_commands['view_list'])}")
+    print(f"--For Deleting the task: {', '.join(main_commands['delete_task'])}")
+    print(f"--For Help/Instructions: {', '.join(main_commands['help'])}")
+    print(f"--To Quit the program: {', '.join(main_commands['quit'])}")
+    print(f"--To Get The Weather Information: {', '.join(main_commands['weather'])}")
+    print(f"--To Check Tasks That they are risky or not!: {', '.join(main_commands['risk_check'])}")
+    print(f"--For Settings Mode!!: {', '.join(main_commands['settings'])}")
 
 
 #loadign the json File or Create if it doesn not Exist
@@ -146,9 +143,9 @@ def outdoor_detection(tasks,config_data):
 # Defining Wheather the Task of outdoor is Risky or not!!
 def risk_check(tasks,city,config_data):
 
-    url = WeatherModules.safe_url(city)
+    url = weather.safe_url(city)
 
-    weather_data = WeatherModules.getting_data(url)
+    weather_data = weather.getting_data(url)
 
     if weather_data is None:
         print("[Weather unavailable - risk not checked]")
