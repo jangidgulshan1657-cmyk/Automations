@@ -3,7 +3,7 @@ from pathlib import Path
 
 CONFIG_PATH = Path('Projects/Taskmanager/data/config.json')
 
-def print_help(settings_commands):
+def print_help(settings_commands:dict)-> None:
     print("\n-----Settings Mode-----!!")
     print(f"\n--For Adding Outdoor Keyword: {', '.join(settings_commands['add_outdoor'])}")
     print(f"--For Adding Weather Conditons: {', '.join(settings_commands['add_weather'])}")
@@ -13,7 +13,7 @@ def print_help(settings_commands):
 
 
 # View the List of Configs
-def view_list_config(config_data):
+def view_list_config(config_data:dict)-> None:
     outdoor = config_data["outdoor_keywords"]
     temperature = config_data["temperature_bounds"]
     weather = config_data["weather_conditions"]
@@ -24,7 +24,7 @@ def view_list_config(config_data):
     
 
 # Checking the validity of Config file
-def is_valid_config(data)->bool:
+def is_valid_config(data:dict)->bool:
     if not isinstance(data,dict):
         return False
 
@@ -56,7 +56,7 @@ def is_valid_config(data)->bool:
 
 
 # Default file of configiration
-def default_file_config():
+def default_file_config()-> dict:
     default_data = {
             'outdoor_keywords': ["mow", "garden", "weed", "leaves", "drive", "walk",
                                 "bike", "park", "store", "groceries", "car", "wash", 
@@ -72,7 +72,7 @@ def default_file_config():
 
 
 # Loading the conf file
-def loading_conf():
+def loading_conf()-> dict:
     
     if not CONFIG_PATH.exists():
         print("Config File Does not Exist!!\n Creating the file.....")
@@ -96,13 +96,13 @@ def loading_conf():
 
 
 # Writing to Config File
-def writing_config(config_data):
+def writing_config(config_data:dict)-> None:
     with open(CONFIG_PATH,'w') as f:
         json.dump(config_data,f,indent=4)
 
 
 # Some ADD fuctions
-def add_outdoor(config_data):
+def add_outdoor(config_data:dict)-> None:
     outdoor_keywords = config_data["outdoor_keywords"]
 
     keyword = input("Keyword: ").strip().lower()
@@ -117,7 +117,7 @@ def add_outdoor(config_data):
     outdoor_keywords.append(keyword)
     print(f"Keyword '{keyword}' has been added. Dont forget to Save!!")
 
-def add_weather_condition(config_data):
+def add_weather_condition(config_data:dict)-> None:
     weather_keywords = config_data["weather_conditions"]
 
     keyword = input("Keyword: ").strip().lower()
@@ -132,7 +132,7 @@ def add_weather_condition(config_data):
     weather_keywords.append(keyword)
     print(f"Keyword '{keyword}' has been added. Dont Forgot to change!!")
 
-def change_temp(config_data):
+def change_temp(config_data:dict)-> None:
     current_min = config_data["temperature_bounds"]["min"]
     current_max = config_data["temperature_bounds"]["max"]
 

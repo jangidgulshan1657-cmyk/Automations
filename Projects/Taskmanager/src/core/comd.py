@@ -14,7 +14,7 @@ def detection(user_input:str,command_map:dict):
 
 
 # Default File 
-def default_file_command():
+def default_file_command()-> dict:
     default_data = {"main_commands": {
                     "add_task": ["add", "add task", "new task"],
                     "mark_done": ["done", "mark", "mark done"],
@@ -62,7 +62,7 @@ def is_valid_command(data)->bool:
 
 
 # Loading the Commands
-def loading_command():    
+def loading_command()-> dict:    
     if not COMMAND_PATH.exists():
         print("Command File Does not Exist!!\n Creating the file.....")
         data = default_file_command()

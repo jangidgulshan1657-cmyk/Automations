@@ -1,7 +1,5 @@
-import weather
-import task
-import config
-import comd
+from services import weather, task
+from core import comd,config
 
 tasks = []
  # main program Loop
@@ -48,7 +46,7 @@ def main():
                 print("\nError: Command Not Found Error!! Type 'help' for More Info")
         
 
-def change_config(config_data,command_data):
+def change_config(config_data:dict,command_data:dict)-> None:
 
     settings_commands = command_data["settings_commands"]
     config.print_help(settings_commands)

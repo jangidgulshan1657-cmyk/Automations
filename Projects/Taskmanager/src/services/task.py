@@ -7,7 +7,7 @@ FILE_PATH = Path('Projects/Taskmanager/data/tasks.json')
 tasks = []
 
 # printing Help
-def print_help(main_commands):
+def print_help(main_commands:dict):
     print("\n------Smart Task Manger -----")
     print("\nFollowing Are the Commands of Each function!! ")
     print(f"\n--To Add task: {', '.join(main_commands['add_task'])}")
@@ -22,7 +22,7 @@ def print_help(main_commands):
 
 
 #loadign the json File or Create if it doesn not Exist
-def loading_tasks(tasks):
+def loading_tasks(tasks:list)->list:
     if not FILE_PATH.exists():
         print("File does not exist! \nCreating the File...")
         default_data = []
@@ -44,13 +44,13 @@ def loading_tasks(tasks):
             return []
 
 # Writing to json Tasks
-def writing(tasks):
+def writing(tasks:list)-> None:
     with open(FILE_PATH,'w') as f:
         json.dump(tasks,f,indent=4)
 
 
 # ADDing the Task function
-def add_task(tasks):
+def add_task(tasks:list)-> None:
     name = input("\nEnter Task Name:").strip().title()
 
     if not name:
@@ -68,7 +68,7 @@ def add_task(tasks):
 
 
 # Organizing the List of Task
-def view_list(tasks):
+def view_list(tasks:list)-> None:
     # if the task dones not exist dont go further!
     if not tasks:
         print("\nTasks not available!!")
@@ -82,7 +82,7 @@ def view_list(tasks):
 
 
 # Marking the Task done
-def mark_done(tasks):
+def mark_done(tasks:list)-> None:
     view_list(tasks)
     if not tasks:#checking agian Whe the task exist or not 
         print("No Tasks to mark done. Please add a task First!!")
@@ -103,7 +103,7 @@ def mark_done(tasks):
         print("Please enter a valid number")
 
 # Deleting the Task
-def delete_task(tasks):
+def delete_task(tasks:list)-> None:
     #Using the same design as mark done
     view_list(tasks)
     if not tasks:
@@ -125,7 +125,7 @@ def delete_task(tasks):
     except ValueError:
         print("Please enter a valid number")
 
-def outdoor_detection(tasks,config_data):
+def outdoor_detection(tasks:list,config_data:dict)-> list:
     outdoor_keywords = config_data["outdoor_keywords"]
 
     outdoor_tasks = []
@@ -141,7 +141,7 @@ def outdoor_detection(tasks,config_data):
 
 
 # Defining Wheather the Task of outdoor is Risky or not!!
-def risk_check(tasks,city,config_data):
+def risk_check(tasks:list,city:str,config_data:dict)-> None:
 
     url = weather.safe_url(city)
 
