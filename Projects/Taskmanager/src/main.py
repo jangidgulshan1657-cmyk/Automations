@@ -1,6 +1,7 @@
 import weather
 import task
 import config
+import comd
 
 tasks = []
  # main program Loop
@@ -8,7 +9,8 @@ tasks = []
 def main():
     tasks_local = task.loading_tasks(tasks)
     config_data = config.loading_conf()
-    main_keyword = config_data["main_commands"]
+    command_data = comd.loading_command()
+    main_keyword = command_data["main_commands"]
 
     task.print_help(main_keyword)
     while True:
@@ -20,7 +22,7 @@ def main():
 
     while True:
             user_input = input("\nMain Command:").strip().lower()
-            command = config.detection(user_input,main_keyword)
+            command = comd.detection(user_input,main_keyword)
 
             if command == "add_task":
                 task.add_task(tasks_local)
@@ -41,19 +43,19 @@ def main():
             elif command == "risk_check":
                 task.risk_check(tasks_local,city,config_data)
             elif command == "settings":
-                change_config(config_data)
+                change_config(config_data,command_data)
             else:
                 print("\nError: Command Not Found Error!! Type 'help' for More Info")
         
 
-def change_config(config_data):
+def change_config(config_data,command_data):
 
-    settings_commands = config_data["settings_commands"]
+    settings_commands = command_data["settings_commands"]
     config.print_help(settings_commands)
 
     while True:
             user_input = input("\nSettings Command: ").strip().lower()
-            command = config.detection(user_input,settings_commands)
+            command = comd.detection(user_input,settings_commands)
 
             if command == "add_outdoor":
                 config.add_outdoor(config_data)

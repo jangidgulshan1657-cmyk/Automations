@@ -11,6 +11,8 @@ def print_help(settings_commands):
     print(f"--View the list of Keyowords in Settings: {', '.join(settings_commands['view_config'])}")
     print(f"--Save the Changes!! And Return to Menu: {', '.join(settings_commands['back'])}")
 
+
+# View the List of Configs
 def view_list_config(config_data):
     outdoor = config_data["outdoor_keywords"]
     temperature = config_data["temperature_bounds"]
@@ -19,13 +21,6 @@ def view_list_config(config_data):
     print(f"Outdoor Keywords = {outdoor}")
     print(f"Weather Keywords = {weather}")
     print(f"Extereme Temperature = {temperature}")
-
-def detection(user_input:str,command_map:dict):
-    if not user_input:
-        return
-    for command, aliases in command_map.items():
-            if user_input in aliases:
-                return command
     
 
 # Checking the validity of Config file
@@ -44,10 +39,8 @@ def is_valid_config(data)->bool:
         return False
     
     bounds = data['temperature_bounds']
-    m_com = data['main_commands']
-    s_com = data['settings_commands']
 
-    if not all(isinstance(x,dict) for x in (bounds,m_com,s_com)):
+    if not isinstance(bounds,dict):
         return False
     
     if 'min' not in bounds or 'max' not in bounds: 
@@ -59,23 +52,11 @@ def is_valid_config(data)->bool:
     if bounds['min'] > bounds['max']:
         return False
 
-    required_main_keys = {"add_task", "mark_done", "view_list", "delete_task", "help", "weather", "risk_check", "settings", "quit"}
-    if not required_main_keys.issubset(m_com.keys()):
-        return False
-    
-    if not all(isinstance(k,list) and all(isinstance(word,str) for word in k) for k in m_com.values()):
-        return False
-    
-    required_setting_keys = {"add_outdoor","add_weather","change_temp","view_config","back",}
-    if not required_setting_keys.issubset(s_com.keys()):
-        return False
-    
-    if not all(isinstance(s,list) and all(isinstance(word,str) for word in s) for s in s_com.values()):
-        return False
-
     return True
 
-def default_file():
+
+# Default file of configiration
+def default_file_config():
     default_data = {
             'outdoor_keywords': ["mow", "garden", "weed", "leaves", "drive", "walk",
                                 "bike", "park", "store", "groceries", "car", "wash", 
@@ -83,36 +64,19 @@ def default_file():
             "temperature_bounds": {"min": 0,"max": 35},
 
             'weather_conditions':["rain", "thunder", "snow"],
-
-            "main_commands": {
-                    "add_task": ["add", "add task", "new task"],
-                    "mark_done": ["done", "mark", "mark done"],
-                    "view_list": ["list", "tasks", "view"],
-                    "delete_task": ["delete", "remove", "del"],
-                    "help": ["help", "commands", "info"],
-                    "weather": ["weather", "forecast", "temp"],
-                    "risk_check": ["risk", "check", "risk check"],
-                    "settings": ["settings", "config", "options"],
-                    "quit": ["quit", "exit", "bye"]
-                },
-            "settings_commands": {
-                    "add_outdoor": ["outdoor", "add outdoor", "outdoor keyword"],
-                    "add_weather": ["weather", "add weather", "weather condition"],
-                    "change_temp": ["temp", "temperature", "change temp"],
-                    "view_config": ["view", "list", "show config"],
-                    "back": ["back", "return", "menu","quit", "exit", "close"]
-                }}
+            }
                             
     with open(CONFIG_PATH,'w') as f:
         json.dump(default_data,f,indent=4)
     return default_data
+
 
 # Loading the conf file
 def loading_conf():
     
     if not CONFIG_PATH.exists():
         print("Config File Does not Exist!!\n Creating the file.....")
-        data = default_file()
+        data = default_file_config()
         return data
 
     else:
@@ -121,21 +85,23 @@ def loading_conf():
                 data = json.load(f)
                 if not is_valid_config(data):
                     print("The Data has Been Corupted!! Going With Defalaut File...")
-                    data = default_file()
+                    data = default_file_config()
                     return data
             return data
 
         except (json.JSONDecodeError,UnicodeDecodeError,OSError):
             print("File has been Currupted!! Going With Defalaut File...")
-            data = default_file()
+            data = default_file_config()
             return data           
 
 
+# Writing to Config File
 def writing_config(config_data):
     with open(CONFIG_PATH,'w') as f:
         json.dump(config_data,f,indent=4)
 
 
+# Some ADD fuctions
 def add_outdoor(config_data):
     outdoor_keywords = config_data["outdoor_keywords"]
 
