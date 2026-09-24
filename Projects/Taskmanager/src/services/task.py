@@ -7,7 +7,7 @@ FILE_PATH = Path('Projects/Taskmanager/data/tasks.json')
 tasks = []
 
 # printing Help
-def print_help(main_commands:dict):
+def print_help(main_commands:dict)-> None:
     print("\n------Smart Task Manger -----")
     print("\nFollowing Are the Commands of Each function!! ")
     print(f"\n--To Add task: {', '.join(main_commands['add_task'])}")

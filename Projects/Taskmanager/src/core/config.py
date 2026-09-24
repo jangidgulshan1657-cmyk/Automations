@@ -81,7 +81,7 @@ def loading_conf()-> dict:
 
     else:
         try:
-            with open(CONFIG_PATH,'r') as f:
+            with open(CONFIG_PATH,'r',encoding="utf-8") as f:
                 data = json.load(f)
                 if not is_valid_config(data):
                     print("The Data has Been Corupted!! Going With Defalaut File...")

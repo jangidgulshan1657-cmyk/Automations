@@ -3,8 +3,8 @@ import urllib.error
 import urllib.parse
 import json
 
-def getting_data(url):
-    if url is None:
+def getting_data(url:str)-> dict|None:
+    if not url:
         print("Url cannot be None")
         return
     try:
@@ -21,8 +21,8 @@ def getting_data(url):
         print("The server did not send back Valid Json!!")
     return None
 
-def organizing_data(information):
-    if information is None:
+def organizing_data(information:dict)-> None:
+    if not information:
         print("Data is Unable to Display")
         return
     
@@ -43,14 +43,14 @@ def organizing_data(information):
     except (KeyError,IndexError):
         print("To Display Expected data is not found!!")
 
-def safe_url(city):
+def safe_url(city:str)-> str:
     # urllib.parse.qoute() change the New York to New%20York 
     safe_city = urllib.parse.quote(city)
 
     url = f"https://wttr.in/{safe_city}?format=j1"
     return url              
 
-def weather_info(city):
+def weather_info(city:str)-> None:
     print("\n------Weather Information--------")
 
     url = safe_url(city)

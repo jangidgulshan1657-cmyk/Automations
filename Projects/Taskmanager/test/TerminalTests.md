@@ -138,3 +138,10 @@ Advisory: Doing Tasks is Risky Due to Extreme Temperature 35C
 Main Command:quit
 
 Changes Has been Saved. Good bye!
+
+
+
+~/Workspace/Languages/Phyton/Automations main* 
+❯ /bin/python3 /home/gulshan/Workspace/Languages/Phyton/Automations/Projects/Taskmanager/test/LLmrequest.py
+['Create a guest list', 'Send out invitations or digital invites', 'Choose a party theme', 'Plan the menu and order a birthday cake', 'Shop for decorations and party supplies', 'Decorate the venue or set up decorations', 'Prepare party games and activities', 'Buy or wrap birthday gifts', 'Arrange music playlist or hire a DJ', 'Confirm any catering or vendor services', 'Set up a photo booth or backdrop', 'Plan a schedule for the party timeline']
+Audit passed! 12 tasks ready for review.

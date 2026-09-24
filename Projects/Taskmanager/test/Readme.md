@@ -1,0 +1,1 @@
+Before applying fuctions Testing here now on and play with the funtion and feature of python to get useded to it !!

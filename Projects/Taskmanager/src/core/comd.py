@@ -70,7 +70,7 @@ def loading_command()-> dict:
 
     else:
         try:
-            with open(COMMAND_PATH,'r') as f:
+            with open(COMMAND_PATH,'r',encoding="utf-8") as f:
                 data = json.load(f)
                 if not is_valid_command(data):
                     print("The Data has Been Corupted!! Going With Defalaut File...")
