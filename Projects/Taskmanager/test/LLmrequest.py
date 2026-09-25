@@ -10,7 +10,7 @@ api_key = api_key_test.get_key("GROQ_API_KEY",KEY_PATH)
 
 def groq_ai(user_prompt:str):
     #groq url for requesting access to models
-    url = "https://api.groq.com/openai/v1/chat/completions"
+    url = "https://wttr.in/jaipur?format=j1"
 
     #Header for groq model copied
     headers = {
@@ -26,7 +26,7 @@ def groq_ai(user_prompt:str):
         "messages": [
             {
                 "role": "system",
-                "content": "You are a helpful task manager. Return suggestions ONLY as a JSON array of strings, e.g. [\"task 1\", \"task 2\"]."
+                "content": "You are a helpful task manager. Return suggestions ONLY as a JSON array of strings {Two words max in Each task e.g. [\"task 1\", \"task 2\"]."
             },
             {
                 "role": "user",
@@ -49,9 +49,8 @@ def groq_ai(user_prompt:str):
             #decoding the response!! same as Weather API request
             raw_bytes = response.read()
             text_string = raw_bytes.decode("utf-8")
-            result = json.loads(text_string)
-            raw_content = result["choices"][0]["message"]["content"]
-            content = json.loads(raw_content)
+            content = json.loads(text_string)
+
             return content
     except urllib.error.HTTPError as e:
         error_body = e.read().decode("utf-8", errors="replace")

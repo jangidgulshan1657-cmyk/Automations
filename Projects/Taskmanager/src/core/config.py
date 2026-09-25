@@ -28,7 +28,7 @@ def is_valid_config(data:dict)->bool:
     if not isinstance(data,dict):
         return False
 
-    required_keys = {"outdoor_keywords", "temperature_bounds", "weather_conditions","main_commands","settings_commands"}
+    required_keys = {"outdoor_keywords", "temperature_bounds", "weather_conditions",}
     if not required_keys.issubset(data.keys()):
         return False
 
@@ -84,7 +84,7 @@ def loading_conf()-> dict:
             with open(CONFIG_PATH,'r',encoding="utf-8") as f:
                 data = json.load(f)
                 if not is_valid_config(data):
-                    print("The Data has Been Corupted!! Going With Defalaut File...")
+                    print("The Config Data has Been Corupted!! Going With Defalaut Config...")
                     data = default_file_config()
                     return data
             return data

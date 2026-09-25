@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-import weather
+from . import weather
 
 FILE_PATH = Path('Projects/Taskmanager/data/tasks.json')
 
@@ -19,6 +19,8 @@ def print_help(main_commands:dict)-> None:
     print(f"--To Get The Weather Information: {', '.join(main_commands['weather'])}")
     print(f"--To Check Tasks That they are risky or not!: {', '.join(main_commands['risk_check'])}")
     print(f"--For Settings Mode!!: {', '.join(main_commands['settings'])}")
+    print(f"--Get AI Task Suggestions: {', '.join(main_commands['suggestions'])}")
+
 
 
 #loadign the json File or Create if it doesn not Exist

@@ -24,7 +24,8 @@ def default_file_command()-> dict:
                     "weather": ["weather", "forecast", "temp"],
                     "risk_check": ["risk", "check", "risk check"],
                     "settings": ["settings", "config", "options"],
-                    "quit": ["quit", "exit", "bye"]
+                    "quit": ["quit", "exit", "bye"],
+                    "suggestions": ["suggest","suggestion","ai help"]
                 },
             "settings_commands": {
                     "add_outdoor": ["outdoor", "add outdoor", "outdoor keyword"],
@@ -40,13 +41,19 @@ def default_file_command()-> dict:
 
 # Checking the full Validation of file:
 def is_valid_command(data)->bool:
-    m_com = data['main_commands']
-    s_com = data['settings_commands']
-
-    if not all(isinstance(v,dict) for v in (m_com,s_com)):
+    if not isinstance(data, dict):
         return False
 
-    required_main_keys = {"add_task", "mark_done", "view_list", "delete_task", "help", "weather", "risk_check", "settings", "quit"}
+    if "main_commands" not in data or "settings_commands" not in data:
+        return False
+
+    m_com = data["main_commands"]
+    s_com = data["settings_commands"]
+
+    if not isinstance(m_com, dict) or not isinstance(s_com, dict):
+        return False
+
+    required_main_keys = {"add_task", "mark_done", "view_list", "delete_task", "help", "weather", "risk_check", "settings", "quit","suggestions"}
     if not required_main_keys.issubset(m_com.keys()):
         return False
     
@@ -59,6 +66,8 @@ def is_valid_command(data)->bool:
     
     if not all(isinstance(s,list) and all(isinstance(word,str) for word in s) for s in s_com.values()):
         return False
+
+    return True
 
 
 # Loading the Commands
@@ -73,7 +82,7 @@ def loading_command()-> dict:
             with open(COMMAND_PATH,'r',encoding="utf-8") as f:
                 data = json.load(f)
                 if not is_valid_command(data):
-                    print("The Data has Been Corupted!! Going With Defalaut File...")
+                    print("The Command Data has Been Corupted!! Going With Defalaut Command...")
                     data = default_file_command()
                     return data
             return data

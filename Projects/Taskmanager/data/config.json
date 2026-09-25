@@ -14,8 +14,7 @@
         "wash",
         "paint",
         "roof",
-        "running",
-        "hiking"
+        "running"
     ],
     "temperature_bounds": {
         "min": 0,
@@ -24,7 +23,6 @@
     "weather_conditions": [
         "rain",
         "thunder",
-        "snow",
-        "heats"
+        "snow"
     ]
 }

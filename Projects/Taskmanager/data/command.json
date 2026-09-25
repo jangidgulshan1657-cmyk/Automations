@@ -44,6 +44,11 @@
             "quit",
             "exit",
             "bye"
+        ],
+        "suggestions": [
+            "suggest",
+            "suggestion",
+            "ai help"
         ]
     },
     "settings_commands": {

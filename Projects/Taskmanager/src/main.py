@@ -1,4 +1,5 @@
 from services import weather, task
+from services import llm
 from core import comd,config
 
 tasks = []
@@ -42,6 +43,8 @@ def main():
                 task.risk_check(tasks_local,city,config_data)
             elif command == "settings":
                 change_config(config_data,command_data)
+            elif command == "suggestions":
+                llm.suggestions(tasks_local)
             else:
                 print("\nError: Command Not Found Error!! Type 'help' for More Info")
         
