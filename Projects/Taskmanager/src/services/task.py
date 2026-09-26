@@ -20,11 +20,12 @@ def print_help(main_commands:dict)-> None:
     print(f"--To Check Tasks That they are risky or not!: {', '.join(main_commands['risk_check'])}")
     print(f"--For Settings Mode!!: {', '.join(main_commands['settings'])}")
     print(f"--Get AI Task Suggestions: {', '.join(main_commands['suggestions'])}")
+    print(f"--To get in AI mode! {', '.join(main_commands['ai_mode'])} ")
 
 
 
 #loadign the json File or Create if it doesn not Exist
-def loading_tasks(tasks:list)->list:
+def loading_tasks()->list:
     if not FILE_PATH.exists():
         print("File does not exist! \nCreating the File...")
         default_data = []
@@ -52,21 +53,35 @@ def writing(tasks:list)-> None:
 
 
 # ADDing the Task function
-def add_task(tasks:list)-> None:
-    name = input("\nEnter Task Name:").strip().title()
-
+def add_task(tasks:list,name= None)-> None:
     if not name:
-        print("Task Name Cannot be Empty.")
+        while True:
+            name = input("\nEnter Task Name:").strip().title()
+
+            if not name:
+                print("Task Name Cannot be Empty.")
+                return
+
+            for task in tasks:
+                if task['name'] == name:
+                    print(f"This '{name}' task already exist!")
+                    return
+            else:
+                break
+        tasks.append({"name":name,"done": False})
+        writing(tasks)
+        print(f"Success the {name} has been added to task list")
         return
+        
+    else:
+        for task in tasks:
+            if task['name'] == name:
+                print(f"This '{name}' task already exist!")
+                return
+        tasks.append({"name":name,"done": False})
+        writing(tasks)
+        print(f"Success the {name} has been added to task list")
 
-    for task in tasks:
-        if task['name'] == name:
-            print(f"This '{name}' task already exist!")
-            return
-
-    tasks.append({"name":name,"done": False})
-    writing(tasks)
-    print(f"Success the {name} has been added to task list")
 
 
 # Organizing the List of Task
@@ -84,48 +99,71 @@ def view_list(tasks:list)-> None:
 
 
 # Marking the Task done
-def mark_done(tasks:list)-> None:
-    view_list(tasks)
-    if not tasks:#checking agian Whe the task exist or not 
-        print("No Tasks to mark done. Please add a task First!!")
+def mark_done(tasks:list,index = None)-> None:
+    if not index :
+        view_list(tasks)
+        if not tasks:#checking agian Whe the task exist or not 
+            print("No Tasks to mark done. Please add a task First!!")
+            return
+        while True:
+            try:
+                number = int(input("\nGive me Number of task to Mark done:").strip())
+                index = number - 1 # making 1 based index no
+                if 0 <= index <len(tasks):
+                    tasks[index]["done"] = True
+                    writing(tasks)
+                    print(f"Maked the {tasks[index]['name']} as done")
+                    break
+                else:
+                    print(f"Invalid Task Number {number}")
+            except ValueError:
+                print("Please enter a valid number")
         return
-
-    try:
-        number = int(input("\nGive me Number of task to Mark done:").strip())
-        index = number - 1 # making the index 0 based as we will use the len fucntion to get which task to mark done
-
-        if 0 <= index <len(tasks):
-            tasks[index]["done"] = True # getting the index for specifing which task to mark as done
+            
+    else:
+        index_1 = index - 1 
+        if 0 <= index_1 <len(tasks):
+            tasks[index_1]["done"] = True 
             writing(tasks)
-            print(f"Maked the {tasks[index]['name']} as done")
+            print(f"Maked the {tasks[index_1]['name']} as done")
         else:
-            print(f"Invalid Task Number {number}")
+            print(f"Invalid Task Number {index}")
 
-    except ValueError:
-        print("Please enter a valid number")
 
 # Deleting the Task
-def delete_task(tasks:list)-> None:
+def delete_task(tasks:list, index = None)-> None:
     #Using the same design as mark done
-    view_list(tasks)
-    if not tasks:
-        print("Nothing to Delete. Please Add a task first!!")
-        return
-    
-    try:
-        number = int(input("Enter the Task Number To Delete:").strip())
-        index = number - 1 # 0 based indexing
+    if not index:
+        view_list(tasks)
+        if not tasks:
+            print("Nothing to Delete. Please Add a task first!!")
+            return
+        while True:
+            try:
+                number = int(input("Enter the Task Number To Delete:").strip())
+                index = number - 1 # 0 based indexing
 
-        if 0 <= index < len(tasks):
-            removed_task = tasks.pop(index)
+                if 0 <= index < len(tasks):
+                    removed_task = tasks.pop(index)
+                    writing(tasks)
+                    print(f"'{removed_task['name']}' successfully deleted!")
+                    break
+                else:
+                    print(f"Invalid Task Number {number}")
+
+            except ValueError:
+                print("Please enter a valid number")
+        
+    else:
+        index_1 = index-1
+        if 0 <= index_1 < len(tasks):
+            removed_task = tasks.pop(index_1)
             writing(tasks)
             print(f"'{removed_task['name']}' successfully deleted!")
-        
+            return
         else:
-            print(f"Invalid Task Number {number}")
+            print(f"Invalid Task Number {index}")
 
-    except ValueError:
-        print("Please enter a valid number")
 
 def outdoor_detection(tasks:list,config_data:dict)-> list:
     outdoor_keywords = config_data["outdoor_keywords"]

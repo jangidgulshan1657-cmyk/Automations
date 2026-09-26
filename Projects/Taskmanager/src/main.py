@@ -1,12 +1,11 @@
 from services import weather, task
-from services import llm
+from services import suggest, ai_command
 from core import comd,config
 
-tasks = []
  # main program Loop
 
 def main():
-    tasks_local = task.loading_tasks(tasks)
+    tasks = task.loading_tasks()
     config_data = config.loading_conf()
     command_data = comd.loading_command()
     main_keyword = command_data["main_commands"]
@@ -24,30 +23,33 @@ def main():
             command = comd.detection(user_input,main_keyword)
 
             if command == "add_task":
-                task.add_task(tasks_local)
+                task.add_task(tasks)
             elif command =="mark_done":
-                task.mark_done(tasks_local)
+                task.mark_done(tasks)
             elif command == "view_list":
-                task.view_list(tasks_local)
+                task.view_list(tasks)
             elif command == "delete_task":
-                task.delete_task(tasks_local)          
+                task.delete_task(tasks)          
             elif command == "help":
                 task.print_help(main_keyword)          
             elif command == "quit":
-                task.writing(tasks_local)
+                task.writing(tasks)
                 print("\nChanges Has been Saved. Good bye!")
                 break
             elif command == "weather":
                 weather.weather_info(city)
             elif command == "risk_check":
-                task.risk_check(tasks_local,city,config_data)
+                task.risk_check(tasks,city,config_data)
             elif command == "settings":
                 change_config(config_data,command_data)
             elif command == "suggestions":
-                llm.suggestions(tasks_local)
+                suggest.suggestions(tasks)
+            elif command == "ai_mode":
+                ai_command.ai_mode(tasks, city, config_data)
             else:
                 print("\nError: Command Not Found Error!! Type 'help' for More Info")
-        
+
+
 
 def change_config(config_data:dict,command_data:dict)-> None:
 

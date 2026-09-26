@@ -25,7 +25,8 @@ def default_file_command()-> dict:
                     "risk_check": ["risk", "check", "risk check"],
                     "settings": ["settings", "config", "options"],
                     "quit": ["quit", "exit", "bye"],
-                    "suggestions": ["suggest","suggestion","ai help"]
+                    "suggestions": ["suggest","suggestion","ai suggestion"],
+                    "ai_mode": ["ai mode","ai","ai help"]
                 },
             "settings_commands": {
                     "add_outdoor": ["outdoor", "add outdoor", "outdoor keyword"],
@@ -53,7 +54,7 @@ def is_valid_command(data)->bool:
     if not isinstance(m_com, dict) or not isinstance(s_com, dict):
         return False
 
-    required_main_keys = {"add_task", "mark_done", "view_list", "delete_task", "help", "weather", "risk_check", "settings", "quit","suggestions"}
+    required_main_keys = {"add_task", "mark_done", "view_list", "delete_task", "help", "weather", "risk_check", "settings", "quit","suggestions","ai_mode"}
     if not required_main_keys.issubset(m_com.keys()):
         return False
     

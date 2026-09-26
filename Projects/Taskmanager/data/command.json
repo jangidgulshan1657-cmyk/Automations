@@ -48,6 +48,11 @@
         "suggestions": [
             "suggest",
             "suggestion",
+            "ai suggestion"
+        ],
+        "ai_mode": [
+            "ai mode",
+            "ai",
             "ai help"
         ]
     },

@@ -10,7 +10,7 @@ api_key = api_key_test.get_key("GROQ_API_KEY",KEY_PATH)
 
 def groq_ai(user_prompt:str):
     #groq url for requesting access to models
-    url = "https://wttr.in/jaipur?format=j1"
+    url = "https://api.groq.com/openai/v1/chat/completions"
 
     #Header for groq model copied
     headers = {

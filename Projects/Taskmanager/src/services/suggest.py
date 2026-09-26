@@ -4,15 +4,15 @@ from . import task
 import urllib.request
 import urllib.error
 
-API_PATH = Path("Projects/Taskmanager/.env")
 
-def get_key(var_name:str,file_path:str)-> str | None:
-    if not file_path.exists():
+def get_key(var_name:str)-> str | None:
+    API_PATH = Path("Projects/Taskmanager/.env")
+    if not API_PATH.exists():
         print("\nError: Environment variable File does not exist! or put it on wrong folder!!")
         print("\nPlease make sure its in Right Folder (Taskmananger!)")
         return None
 
-    with open(file_path,'r',encoding='utf-8') as f:
+    with open(API_PATH,'r',encoding='utf-8') as f:
         for line in f:
             line = line.strip()
             if line and not line.startswith("#") and "=" in line:
@@ -25,10 +25,8 @@ def get_key(var_name:str,file_path:str)-> str | None:
     return None
 
 def valid_tasks(ai_tasks:list)-> list|None:
-
     if not ai_tasks:
         return
-
     if not isinstance(ai_tasks,list):
         return
 
@@ -41,12 +39,10 @@ def valid_tasks(ai_tasks:list)-> list|None:
         cleaned = task.strip()
         if not cleaned:
             continue
-
         valid_tasks.append(cleaned)
 
     if not valid_tasks:
-        return
-    
+        return    
     return valid_tasks
 
     
@@ -148,7 +144,7 @@ def add_suggested_tasks(valid_tasks:list,tasks:list):
 def suggestions(tasks:list):
     print("\nRemember:-----Suggestion Only DSIGN for GROQ API!!------")
 
-    key = get_key("GROQ_API_KEY",API_PATH)
+    key = get_key("GROQ_API_KEY")
     if not key:
         print("\nPlease Fix the Above: Error!!")
         return
