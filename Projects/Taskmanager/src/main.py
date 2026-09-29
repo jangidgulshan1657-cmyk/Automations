@@ -1,81 +1,93 @@
 from services import weather, task
+from services.task import OutdoorManager
 from services import suggest, ai_command
-from core import comd,config
+from core import comd
+from core.config import Config
+from core.comd import Command
+from pathlib import Path
+from services.help import Help
+
 
  # main program Loop
+FILE_PATH = 'Projects/Taskmanager/data/tasks.json'
+COMMAND_PATH = 'Projects/Taskmanager/data/command.json'
+CONFIG_PATH = 'Projects/Taskmanager/data/config.json'
+
 
 def main():
-    tasks = task.loading_tasks()
-    config_data = config.loading_conf()
-    command_data = comd.loading_command()
-    main_keyword = command_data["main_commands"]
+    CommandCl = Command(COMMAND_PATH)
+    command_data = CommandCl.data
 
-    task.print_help(main_keyword)
-    while True:
-            city = input("\nCurrently Which City You live In: ").strip()
-            if city:
-                break
-            print("City cannot be Empty!")
+    hlp = Help(command_data)
+    hlp.print_help_main()
+
+    print("\n----[Weather: Please Enter Which City Are you in!!]----")
+    url = weather.get_city()
+    wth = weather.Weather(url)
+    weather_data = wth.data
+
+    configs = Config(CONFIG_PATH)
+    config_data = configs.data
+
+    TaskCl = OutdoorManager(FILE_PATH,config_data,weather_data)
+    tasks = TaskCl.data
+
 
 
     while True:
             user_input = input("\nMain Command:").strip().lower()
-            command = comd.detection(user_input,main_keyword)
+            command = hlp.detect_command(user_input)
 
             if command == "add_task":
-                task.add_task(tasks)
+                TaskCl.add_task()
             elif command =="mark_done":
-                task.mark_done(tasks)
+                TaskCl.mark_done()
             elif command == "view_list":
-                task.view_list(tasks)
+                TaskCl.view_list()
             elif command == "delete_task":
-                task.delete_task(tasks)          
+                TaskCl.delete_task()          
             elif command == "help":
-                task.print_help(main_keyword)          
+                hlp.print_help_main(main_keyword)          
             elif command == "quit":
-                task.writing(tasks)
+                TaskCl.writing()
                 print("\nChanges Has been Saved. Good bye!")
                 break
             elif command == "weather":
-                weather.weather_info(city)
+                wth.weather_info()
             elif command == "risk_check":
-                task.risk_check(tasks,city,config_data)
+                TaskCl.risk_check(wth)
             elif command == "settings":
-                change_config(config_data,command_data)
+                configs.change_config(command_data)
             elif command == "suggestions":
                 suggest.suggestions(tasks)
             elif command == "ai_mode":
-                ai_command.ai_mode(tasks, city, config_data)
+                ai_command.ai_mode(tasks)
             else:
                 print("\nError: Command Not Found Error!! Type 'help' for More Info")
 
-
-
-def change_config(config_data:dict,command_data:dict)-> None:
-
-    settings_commands = command_data["settings_commands"]
-    config.print_help(settings_commands)
+def change_config(command_data:dict)-> None:
+    hlp.print_help_config()
 
     while True:
             user_input = input("\nSettings Command: ").strip().lower()
-            command = comd.detection(user_input,settings_commands)
+            command = hlp.detect_command(user_input)
 
             if command == "add_outdoor":
-                config.add_outdoor(config_data)
+                add_outdoor()
             elif command == "add_weather":
-                config.add_weather_condition(config_data)
+                add_weather_condition()
             elif command == "change_temp":
-                config.change_temp(config_data)
+                change_temp()
             elif command == "view_config":
-                config.view_list_config(config_data)
+                view_list_config()
             elif command == "back":
-                config.writing_config(config_data)
+                writing_config()
                 print("Changes has been Updated and Saved!!")
                 print(" Returning to Menu.....")
                 break
             else:
-                config.print_help(settings_commands)
-                print("Please Enter Valid Command!!")
+                hlp.print_help_config()
+                print("Error: Command Not Found Error!!")
 
 
 if __name__ == "__main__":

@@ -14,11 +14,12 @@
         "wash",
         "paint",
         "roof",
-        "running"
+        "running",
+        "go"
     ],
     "temperature_bounds": {
         "min": 0,
-        "max": 35
+        "max": 29
     },
     "weather_conditions": [
         "rain",

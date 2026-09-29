@@ -86,7 +86,7 @@ def get_ai_response(current_tasks:list,user_prompt:str,api_key:str)-> dict|None:
     return None
 
 
-def valid_response(response:dict):
+def is_valid(response:dict):
     if not isinstance(response,dict):
         return False
 
@@ -115,8 +115,7 @@ def valid_response(response:dict):
     if fn_name in {'risk_check','weather_check','view_list','quit'}:
         return True
     if fn_name == 'unknown':
-        print("Funtion Not Available!!")
-        return False
+        return True
     return False
 
 # Main logic of AI Mode!!
@@ -158,23 +157,25 @@ def ai_mode(tasks: list, city: str, config_data: dict) -> None:
                 print("Action cancelled by user.")
                 continue 
 
+        TaskCl = task.OutdoorManager(tasks)
+
         if fn_name == "add_task":
-            task.add_task(tasks, args["name"].strip().title())
+            TaskCl.add_task(args["name"].strip().title())
         
         elif fn_name == "mark_done":
-            task.mark_done(tasks, args["task_number"])
+            TaskCl.mark_done(args["task_number"])
 
         elif fn_name == "delete_task":
-            task.delete_task(tasks, args["task_number"])
+            TaskCl.delete_task(args["task_number"])
         
         elif fn_name == "view_list":
-            task.view_list(tasks)
+            TaskCl.view_list()
 
         elif fn_name == "weather_check":
             weather.weather_info(city)
 
         elif fn_name == "risk_check":
-            task.risk_check(tasks, city, config_data)
+            TaskCl.risk_check(city)
             
         elif fn_name == "unknown":
             print("AI could not map your request to an available function. Try rephrasing.")
