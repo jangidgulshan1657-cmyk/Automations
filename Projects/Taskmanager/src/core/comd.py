@@ -4,8 +4,7 @@ from parent.parent import JsonStore
 
 
 class Command(JsonStore):
-    super().__init__(path)
-        
+      
     # Default File 
     def default(self)-> dict:
         default_data = {"main_commands": {
@@ -60,3 +59,4 @@ class Command(JsonStore):
             return False
 
         return True
+

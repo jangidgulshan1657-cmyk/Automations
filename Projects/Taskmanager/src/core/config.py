@@ -4,8 +4,6 @@ from parent.parent import JsonStore
 
 
 class Config(JsonStore):
-    super().__init__(path)
-
 
     # Default file of configiration
     def default(self)-> dict:

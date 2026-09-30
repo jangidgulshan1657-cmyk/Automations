@@ -27,12 +27,10 @@ class Help:
         print(f"--View the list of Keyowords in Settings: {', '.join(self.settings_commands['view_config'])}")
         print(f"--Save the Changes!! And Return to Menu: {', '.join(self.settings_commands['back'])}")
 
-    def detect_command(self,user_input:str):
+    def detect_command(self,user_input:str,command_set:dict)->str| None:
         if not user_input:
-            return
-        for command, aliases in self.settings_commands.items():
+            return None
+        for command, aliases in command_set.items():
             if user_input in aliases:
                 return command
-        for main_cmd, main_ali in self.main_commands.items():
-            if user_input in main_ali:
-                return main_cmd
+        return None

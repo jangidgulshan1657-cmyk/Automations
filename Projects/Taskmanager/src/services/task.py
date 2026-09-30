@@ -6,7 +6,6 @@ from core import comd,config
 from parent.parent import JsonStore
 
 class TaskManager(JsonStore):
-    super().__init__(path)
 
     def default(self)->list:
         return []
@@ -15,27 +14,6 @@ class TaskManager(JsonStore):
         if not isinstance(data,list) or not all(isinstance(t,dict) and "name" in t and "done" in t for t in data):
             return False
         return True
-
-    def name_check(self,name:str)-> bool:
-        if not name:
-            return False
-        for task in self.data:
-            if task['name'] == name:
-                return False
-        self.data.append({"name":name,"done": False})
-        self.safe()
-        return True
-
-    # ADDing the Task function
-    def add_task(self)-> None:
-        while True:
-            name = input("\nEnter Task Name:").strip().title()
-            if self.name_check(name):
-                print(f"Success the {name} has been added to task list")
-                return
-            else:
-                print("Error: Task is Empty or Already ExistS!!")
-
     # Organizing the List of Task
     def view_list(self)-> None:
         # if the task dones not exist dont go further!
@@ -49,6 +27,33 @@ class TaskManager(JsonStore):
             status = "[X]" if task["done"] else "[]"
             print(f"{status} {index} {task['name']}")
 
+    def name_check(self,name:str)-> bool:
+        if not name:
+            return False
+        for task in self.data:
+            if task['name'] == name:
+                return False
+        self.data.append({"name":name,"done": False})
+        self.save()
+        return True
+
+    # ADDing the Task function
+    def add_task(self)-> None:
+        while True:
+            name = input("\nEnter Task Name:").strip().title()
+            if self.name_check(name):
+                print(f"Success the {name} has been added to task list")
+                return
+            else:
+                print("Error: Task is Empty or Already ExistS!!")
+
+    def add_task_ai(self,name:str)-> None:
+        if self.name_check(name):
+            print(f"Success the {name} has been added to task list")
+            return None
+        else:
+            print("Error: Task is Empty or Already ExistS!!")
+            return None
 
     # Marking the Task done
     def mark_done(self)-> None:
@@ -59,7 +64,7 @@ class TaskManager(JsonStore):
                 index = number - 1 # making 1 based index no
                 if 0 <= index <len(self.data):
                     self.data[index]["done"] = True
-                    self.safe()
+                    self.save()
                     print(f"Maked the {self.data[index]['name']} as done")
                     return
                 else:
@@ -67,6 +72,17 @@ class TaskManager(JsonStore):
             except ValueError:
                 print("Please enter a valid number")
                 
+    def mark_done_ai(self,number:int)-> None:
+        index = number - 1 # making 1 based index no
+        if 0 <= index <len(self.data):
+            self.data[index]["done"] = True
+            self.save()
+            print(f"Maked the {self.data[index]['name']} as done")
+            return None
+        else:
+            print(f"Invalid Task Number {number}")
+            return None
+
 
     # Deleting the Task
     def delete_task(self)-> None:
@@ -78,15 +94,28 @@ class TaskManager(JsonStore):
 
                 if 0 <= index < len(self.data):
                     removed_task = self.data.pop(index)
-                    self.safe()
+                    self.save()
                     print(f"'{removed_task['name']}' successfully deleted!")
-                    return
+                    return None
                 else:
                     print(f"Invalid Task Number {number}")
 
             except ValueError:
                 print("Please enter a valid number")
-            
+    
+    
+    def delete_task_ai(self,number:int)-> None:
+        index = number - 1 # 0 based indexing
+
+        if 0 <= index < len(self.data):
+            removed_task = self.data.pop(index)
+            self.save()
+            print(f"'{removed_task['name']}' successfully deleted!")
+            return None
+        else:
+            print(f"Invalid Task Number {number}")
+            return None
+
 
 class OutdoorManager(TaskManager):
     def __init__(self,file_path,config_data,weather_data):
@@ -96,36 +125,30 @@ class OutdoorManager(TaskManager):
         self.outdoor_keywords = self.config_data["outdoor_keywords"]
         self.weather_data = weather_data
 
-        
-    def outdoor_detection(self)-> None:
-        outdoor_tasks = []
+    def is_outdoor(self, task) -> bool:
+        name = task['name'].lower()
+        return any(keyword in name for keyword in self.outdoor_keywords)
 
-        for task in self.data:
-            task_name = task['name'].lower()
-            for keyword in self.outdoor_keywords:
-                if keyword in task_name:
-                    outdoor_tasks.append(task)
-                    break
-
-        if not outdoor_tasks:
+    def outdoor_detection(self) -> None:
+        if not any(self.is_outdoor(task) for task in self.data):
             print("\nThere is no outdoor tasks!!")
             return
 
-        print("\n---Task Evalution !!--- ")
+        risky = self.weather_risky()  # call once, not once per task
 
-        for index, task in enumerate(self.data,start =1):
-            status = "[X]" if task["done"] else "[]"
-            is_outdoor = task in outdoor_tasks
+        print("\n---Task Evaluation !!--- ")
 
-            if is_outdoor and self.weather_risky():
-                tag = "[Risky: Outdoor]"
-            elif is_outdoor:
-                tag = "[Safe: Outdoor]"
-            else:
+        for index, task in enumerate(self.data, start=1):
+            status = "[X]" if task["done"] else "[ ]"
+
+            if not self.is_outdoor(task):
                 tag = "[Indoor]"
+            elif risky:
+                tag = "[Risky: Outdoor]"
+            else:
+                tag = "[Safe: Outdoor]"
 
-            print(f"{index} {status}{task['name']} {tag} ")
-        return 
+            print(f"{index} {status} {task['name']} {tag}")
 
        
     def weather_risky(self)-> bool|None:
@@ -162,6 +185,7 @@ class OutdoorManager(TaskManager):
     # Defining Wheather the Task of outdoor is Risky or not!!
     def risk_check(self)-> None:
         if not (temp_wth:= self.temp_wth_list()):
+            print("Weather Error!!!")
             return None
 
         temperature,weather_condition = temp_wth  

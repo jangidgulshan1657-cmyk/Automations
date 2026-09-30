@@ -31,7 +31,6 @@ class Weather(Url):
             if key not in current:
                 return False
 
-
         desc_list = current["weatherDesc"]
 
         if not isinstance(desc_list,list):
@@ -45,7 +44,7 @@ class Weather(Url):
         if not isinstance(area["country"], list):
             return False
 
-        if 'value' not in area["country"]:
+        if 'value' not in area["country"][0]:
             return False
         return True
 

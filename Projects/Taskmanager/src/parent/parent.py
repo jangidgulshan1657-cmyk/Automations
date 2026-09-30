@@ -14,7 +14,7 @@ class JsonStore:
     def is_valid(self,data):
         raise NotImplementedError 
 
-    def safe(self):
+    def save(self):
         self.path.parent.mkdir(parents= True, exist_ok= True)
         with open(self.path,'w',encoding='utf-8') as f:
             json.dump(self.data,f,indent= 4)
@@ -31,7 +31,7 @@ class JsonStore:
         except (json.JSONDecodeError,UnicodeDecodeError,OSError):
             print("File has been Currupted!! Using Defaults!!")
         self.data =  self.default()
-        self.safe()
+        self.save()
         return self.data
 
 class Url:
@@ -39,7 +39,7 @@ class Url:
         self.url = url
         self.raw_data = self.url_req()
 
-    def is_valid(self):
+    def is_valid(self,data):
         raise NotImplementedError
 
     def safe_data(self):
@@ -47,7 +47,7 @@ class Url:
 
     def url_req(self):
         try:
-            with urllib.request.urlopen(self.url, timeout=25) as reponse:
+            with urllib.request.urlopen(self.url, timeout=10) as reponse:
                 raw_bytes = reponse.read()                                #Convering Raw bites
                 text_data =  raw_bytes.decode('utf-8')                    #Converting in text format
                 data = json.loads(text_data)                              #Conveting the string to json 
